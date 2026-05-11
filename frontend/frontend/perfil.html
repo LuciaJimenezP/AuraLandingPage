@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AuraHealth – Mi Perfil</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* ── Modals ── */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;align-items:center;justify-content:center;}
+    .modal-overlay.show{display:flex;}
+    .modal{background:var(--surface);border-radius:var(--radius);padding:28px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:modalIn .2s ease;max-height:90vh;overflow-y:auto;}
+    @keyframes modalIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .modal-header h3{font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:700;color:var(--blue-dark);}
+    .modal-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted);}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+    /* ── Profile med row ── */
+    .pmed-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);transition:border-color .2s;}
+    .pmed-row:hover{border-color:var(--turquoise);}
+    .pmed-del{background:none;border:none;cursor:pointer;color:var(--text-muted);padding:5px;border-radius:6px;display:flex;align-items:center;transition:color .2s;}
+    .pmed-del:hover{color:#e05050;}
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="app-wrapper">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+        <circle cx="17" cy="17" r="17" fill="#1a3a6e"/>
+        <path d="M9 17 C9 12, 14 8, 17 13 C20 8, 25 12, 25 17 C25 22, 17 27, 17 27 C17 27, 9 22, 9 17Z" fill="#4db8c8"/>
+      </svg>
+      <span>AuraHealth</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item" data-page="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Inicio
+      </a>
+      <a href="recordatorios.html" class="nav-item" data-page="recordatorios.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        Recordatorios
+      </a>
+      <a href="recomendaciones.html" class="nav-item" data-page="recomendaciones.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        Recomendaciones
+      </a>
+      <a href="perfil.html" class="nav-item active" data-page="perfil.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+        Mi Perfil
+      </a>
+      <a href="partner.html" class="nav-item" data-page="partner.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Partner
+      </a>
+      <div class="nav-divider"></div>
+      <div class="nav-item" onclick="document.getElementById('botFab').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        AuraBot
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;padding:0 2px;">Accesibilidad</div>
+      <div class="a11y-bar">
+        <button class="a11y-btn" id="fontDown">A-</button>
+        <button class="a11y-btn" id="fontUp">A+</button>
+        <button class="toggle-dark" id="darkToggle"></button>
+        <span style="font-size:.75rem;color:var(--text-muted);">Oscuro</span>
+      </div>
+      <div class="nav-divider" style="margin:12px 0"></div>
+      <a href="index.html" class="nav-item" style="color:#e05050;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#e05050" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Cerrar Sesión
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        <h1>Mi Perfil</h1>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="badge"></span>
+        </button>
+        <div class="avatar" id="topbarAvatar">JS</div>
+      </div>
+    </header>
+
+    <main class="page-body">
+
+      <!-- ── PROFILE HERO ── -->
+      <div class="profile-hero mb-6">
+        <div class="profile-avatar-lg" id="heroInitials">JS</div>
+        <div style="flex:1;">
+          <h2 id="heroName">Jake Smith</h2>
+          <p id="heroEmail">jake.smith@email.com · Lima, Perú</p>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="val" id="heroAge">28</div>
+              <div class="lbl">Años</div>
+            </div>
+            <div class="profile-stat">
+              <div class="val" id="heroPeso">75 kg</div>
+              <div class="lbl">Peso</div>
+            </div>
+            <div class="profile-stat">
+              <div class="val" id="heroAltura">178 cm</div>
+              <div class="lbl">Altura</div>
+            </div>
+            <div class="profile-stat">
+              <div class="val" id="heroImc">23.7</div>
+              <div class="lbl">IMC</div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-outline"
+          style="border-color:rgba(255,255,255,.6);color:#fff;background:rgba(255,255,255,.1);"
+          onclick="document.getElementById('editSection').scrollIntoView({behavior:'smooth'})">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Editar perfil
+        </button>
+      </div>
+
+      <div class="grid-2" style="gap:24px;">
+
+        <!-- ── LEFT COLUMN ── -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+
+          <!-- Health summary -->
+          <div class="card">
+            <div class="card-title" style="justify-content:space-between;">
+              <span style="display:flex;align-items:center;gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                Resumen de Salud
+              </span>
+              <button onclick="openHealthModal()" title="Editar resumen"
+                style="background:var(--blue-dark);border:none;border-radius:8px;padding:5px 12px;cursor:pointer;
+                       color:#fff;font-size:.8rem;font-family:'Poppins',sans-serif;font-weight:600;
+                       display:flex;align-items:center;gap:6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Editar
+              </button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+                <span style="font-size:.9rem;color:var(--text-muted);">Tipo de sangre</span>
+                <span id="hsSangre" style="font-weight:700;color:var(--blue-dark);">O+</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+                <span style="font-size:.9rem;color:var(--text-muted);">Presión arterial</span>
+                <span id="hsPresion" style="font-weight:700;color:#22b573;">120/80 mmHg</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+                <span style="font-size:.9rem;color:var(--text-muted);">Glucosa en sangre</span>
+                <span id="hsGlucosa" style="font-weight:700;color:#22b573;">95 mg/dL</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+                <span style="font-size:.9rem;color:var(--text-muted);">Colesterol total</span>
+                <span id="hsColesterol" style="font-weight:700;color:#f07030;">210 mg/dL</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+                <span style="font-size:.9rem;color:var(--text-muted);">Alergias</span>
+                <span id="hsAlergias" style="font-weight:700;color:var(--text);">Penicilina</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medications -->
+          <div class="card">
+            <div class="card-title" style="justify-content:space-between;">
+              <span style="display:flex;align-items:center;gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                </svg>
+                Medicamentos Actuales
+              </span>
+              <button onclick="openProfileMedModal()" title="Agregar medicamento"
+                style="background:var(--blue-dark);border:none;border-radius:8px;width:28px;height:28px;
+                       cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </button>
+            </div>
+            <div id="profileMedList" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+
+        </div>
+
+        <!-- ── RIGHT COLUMN ── -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+
+          <!-- Edit form -->
+          <div class="card" id="editSection">
+            <div class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              Editar Información
+            </div>
+            <form id="profileForm" onsubmit="saveProfile(event)">
+              <div class="grid-2" style="gap:12px;">
+                <div class="form-group">
+                  <label>Nombre</label>
+                  <input type="text" id="pNombre" value="Jake"/>
+                </div>
+                <div class="form-group">
+                  <label>Apellido</label>
+                  <input type="text" id="pApellido" value="Smith"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Correo electrónico</label>
+                <input type="email" id="pEmail" value="jake.smith@email.com"/>
+              </div>
+              <div class="form-group">
+                <label>Teléfono</label>
+                <input type="tel" id="pTelefono" value="+51 999 123 456"/>
+              </div>
+              <div class="grid-2" style="gap:12px;">
+                <div class="form-group">
+                  <label>Fecha de nacimiento</label>
+                  <input type="date" id="pNacimiento" value="1997-03-15"/>
+                </div>
+                <div class="form-group">
+                  <label>Sexo</label>
+                  <select id="pSexo">
+                    <option>Masculino</option>
+                    <option>Femenino</option>
+                    <option>Prefiero no indicar</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid-2" style="gap:12px;">
+                <div class="form-group">
+                  <label>Peso (kg)</label>
+                  <input type="number" id="pPeso" value="75" min="20" max="300"/>
+                </div>
+                <div class="form-group">
+                  <label>Altura (cm)</label>
+                  <input type="number" id="pAltura" value="178" min="50" max="250"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Médico de cabecera</label>
+                <input type="text" value="Dr. Ramírez – Clínica San Pablo"/>
+              </div>
+              <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="this.form.reset()">Cancelar</button>
+                <button type="submit" class="btn btn-primary btn-sm">Guardar cambios</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Preferences -->
+          <div class="card">
+            <div class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/>
+              </svg>
+              Configuración
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-weight:600;font-size:.9rem;">Modo oscuro</div>
+                  <div style="font-size:.78rem;color:var(--text-muted);">Activar tema oscuro</div>
+                </div>
+                <button class="toggle-dark" id="darkToggle2"
+                  onclick="document.getElementById('darkToggle').click();this.classList.toggle('on')"></button>
+              </div>
+
+              <div style="height:1px;background:var(--border);"></div>
+
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-weight:600;font-size:.9rem;">Notificaciones de recordatorios</div>
+                  <div style="font-size:.78rem;color:var(--text-muted);">Recibir alertas de citas</div>
+                </div>
+                <button class="toggle-dark on" style="background:var(--blue-dark);"></button>
+              </div>
+
+              <div style="height:1px;background:var(--border);"></div>
+
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-weight:600;font-size:.9rem;">Tamaño de fuente</div>
+                  <div style="font-size:.78rem;color:var(--text-muted);">Ajusta el texto a tu preferencia</div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <button class="a11y-btn" id="fontDown2"
+                    onclick="document.getElementById('fontDown').click()">A-</button>
+                  <button class="a11y-btn" id="fontUp2"
+                    onclick="document.getElementById('fontUp').click()">A+</button>
+                </div>
+              </div>
+
+              <div style="height:1px;background:var(--border);"></div>
+
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-weight:600;font-size:.9rem;">Idioma</div>
+                  <div style="font-size:.78rem;color:var(--text-muted);">Español (Perú)</div>
+                </div>
+                <select style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;
+                               background:var(--bg);color:var(--text);font-size:.85rem;outline:none;">
+                  <option>Español</option>
+                  <option>English</option>
+                  <option>Português</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /grid-2 -->
+
+    </main>
+  </div>
+</div>
+
+<!-- ── MOBILE NAV ── -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a href="dashboard.html" class="mobile-nav-item" data-page="dashboard.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      Inicio
+    </a>
+    <a href="recordatorios.html" class="mobile-nav-item" data-page="recordatorios.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      Recordatorios
+    </a>
+    <a href="recomendaciones.html" class="mobile-nav-item" data-page="recomendaciones.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      Recs
+    </a>
+    <a href="perfil.html" class="mobile-nav-item active" data-page="perfil.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      Perfil
+    </a>
+    <a href="partner.html" class="mobile-nav-item" data-page="partner.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      Partner
+    </a>
+  </div>
+</nav>
+
+<!-- ── MODAL: Editar Resumen de Salud ── -->
+<div class="modal-overlay" id="healthModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Resumen de Salud</h3>
+      <button class="modal-close" onclick="closeHealthModal()">✕</button>
+    </div>
+    <form id="healthForm">
+      <div class="form-group">
+        <label>Tipo de sangre</label>
+        <input type="text" id="hsEditSangre" placeholder="Ej: O+"/>
+      </div>
+      <div class="form-group">
+        <label>Presión arterial</label>
+        <input type="text" id="hsEditPresion" placeholder="Ej: 120/80 mmHg"/>
+      </div>
+      <div class="form-group">
+        <label>Glucosa en sangre</label>
+        <input type="text" id="hsEditGlucosa" placeholder="Ej: 95 mg/dL"/>
+      </div>
+      <div class="form-group">
+        <label>Colesterol total</label>
+        <input type="text" id="hsEditColesterol" placeholder="Ej: 210 mg/dL"/>
+      </div>
+      <div class="form-group">
+        <label>Alergias</label>
+        <input type="text" id="hsEditAlergias" placeholder="Ej: Penicilina, Mariscos"/>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeHealthModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── MODAL: Agregar Medicamento ── -->
+<div class="modal-overlay" id="profileMedModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Agregar Medicamento</h3>
+      <button class="modal-close" onclick="closeProfileMedModal()">✕</button>
+    </div>
+    <form id="profileMedForm">
+      <div class="form-group">
+        <label>Nombre y dosis</label>
+        <input type="text" id="pmName" placeholder="Ej: Metformina 500mg" required/>
+      </div>
+      <div class="form-group">
+        <label>Frecuencia / Instrucciones</label>
+        <input type="text" id="pmFreq" placeholder="Ej: 2 veces al día – con alimentos"/>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeProfileMedModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── AURABOT ── -->
+<button class="aurabot-fab" id="botFab" title="AuraBot">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+</button>
+<div class="aurabot-window" id="botWindow">
+  <div class="bot-header">
+    <div class="bot-dot"></div>
+    <h4>AuraBot</h4>
+    <button class="bot-close" id="botClose">✕</button>
+  </div>
+  <div class="bot-messages" id="botMessages">
+    <div class="msg bot">Hola Jake 😊 ¿Tienes alguna consulta sobre tu salud o medicamentos?</div>
+  </div>
+  <div class="bot-suggestions">
+    <button class="sug-chip">Mis medicamentos</button>
+    <button class="sug-chip">Consejo de ejercicio</button>
+    <button class="sug-chip">Consejo de nutrición</button>
+  </div>
+  <div class="bot-input-row">
+    <input type="text" id="botInput" placeholder="Escribe tu consulta..."/>
+    <button class="bot-send" id="botSend">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" style="position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--blue-dark);color:#fff;padding:12px 24px;border-radius:24px;font-size:.9rem;
+  font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transition:all .3s ease;
+  pointer-events:none;z-index:500;white-space:nowrap;">
+  ✓ Cambios guardados
+</div>
+
+<script src="js/main.js"></script>
+<script>
+/* ── Health data ─────────────────────────── */
+let healthData = {
+  sangre:     'O+',
+  presion:    '120/80 mmHg',
+  glucosa:    '95 mg/dL',
+  colesterol: '210 mg/dL',
+  alergias:   'Penicilina',
+};
+
+/* ── Profile medications ─────────────────── */
+const PROF_COLORS = ['#4db8c8','#2155a3','#22b573','#f07030','#9b59b6','#e74c3c'];
+let profileMeds = [
+  { id:1, name:'Metformina 500mg',  freq:'2 veces al día – con alimentos' },
+  { id:2, name:'Losartán 50mg',     freq:'1 vez al día – mañana'          },
+  { id:3, name:'Vitamina D 1000UI', freq:'1 vez al día – con desayuno'    },
+  { id:4, name:'Omeprazol 20mg',    freq:'1 vez al día – antes de comer'  },
+];
+let nextProfMedId = 5;
+
+/* ── Render functions ────────────────────── */
+function renderProfileMeds() {
+  const el = document.getElementById('profileMedList');
+  if (!el) return;
+  if (!profileMeds.length) {
+    el.innerHTML = `<p style="font-size:.85rem;color:var(--text-muted);text-align:center;padding:16px 0;">
+      Sin medicamentos registrados. Pulsa + para agregar.</p>`;
+    return;
+  }
+  el.innerHTML = profileMeds.map((m, i) => `
+    <div class="pmed-row">
+      <div style="width:10px;height:10px;border-radius:50%;background:${PROF_COLORS[i % PROF_COLORS.length]};flex-shrink:0;"></div>
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:.9rem;">${m.name}</div>
+        <div style="font-size:.78rem;color:var(--text-muted);">${m.freq}</div>
+      </div>
+      <button class="pmed-del" onclick="deleteProfileMed(${m.id})" title="Eliminar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/>
+          <path d="M9 6V4h6v2"/>
+        </svg>
+      </button>
+    </div>`).join('');
+}
+
+function deleteProfileMed(id) {
+  profileMeds = profileMeds.filter(m => m.id !== id);
+  renderProfileMeds();
+}
+
+function renderHealthSummary() {
+  document.getElementById('hsSangre').textContent     = healthData.sangre     || '–';
+  document.getElementById('hsPresion').textContent    = healthData.presion    || '–';
+  document.getElementById('hsGlucosa').textContent    = healthData.glucosa    || '–';
+  document.getElementById('hsColesterol').textContent = healthData.colesterol || '–';
+  document.getElementById('hsAlergias').textContent   = healthData.alergias   || 'Ninguna';
+}
+
+/* ── Modal handlers ──────────────────────── */
+function openHealthModal() {
+  document.getElementById('hsEditSangre').value     = healthData.sangre;
+  document.getElementById('hsEditPresion').value    = healthData.presion;
+  document.getElementById('hsEditGlucosa').value    = healthData.glucosa;
+  document.getElementById('hsEditColesterol').value = healthData.colesterol;
+  document.getElementById('hsEditAlergias').value   = healthData.alergias;
+  document.getElementById('healthModal').classList.add('show');
+}
+function closeHealthModal() {
+  document.getElementById('healthModal').classList.remove('show');
+}
+function openProfileMedModal() {
+  document.getElementById('profileMedModal').classList.add('show');
+  setTimeout(() => document.getElementById('pmName').focus(), 100);
+}
+function closeProfileMedModal() {
+  document.getElementById('profileMedModal').classList.remove('show');
+  document.getElementById('profileMedForm').reset();
+}
+
+/* ── Save profile ────────────────────────── */
+function saveProfile(e) {
+  e.preventDefault();
+
+  const nombre   = document.getElementById('pNombre').value.trim();
+  const apellido = document.getElementById('pApellido').value.trim();
+  const email    = document.getElementById('pEmail').value.trim();
+  const nacStr   = document.getElementById('pNacimiento').value;
+  const peso     = parseFloat(document.getElementById('pPeso').value);
+  const altura   = parseFloat(document.getElementById('pAltura').value);
+
+  // Name & initials
+  if (nombre || apellido) {
+    const fullName = `${nombre} ${apellido}`.trim();
+    document.getElementById('heroName').textContent = fullName;
+    const initials = `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
+    document.getElementById('heroInitials').textContent = initials;
+    const av = document.getElementById('topbarAvatar');
+    if (av) av.textContent = initials;
+  }
+
+  // Email
+  if (email) document.getElementById('heroEmail').textContent = email;
+
+  // Age from birth date
+  if (nacStr) {
+    const today = new Date();
+    const bday  = new Date(nacStr + 'T00:00:00');
+    let age = today.getFullYear() - bday.getFullYear();
+    const m = today.getMonth() - bday.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < bday.getDate())) age--;
+    document.getElementById('heroAge').textContent = age;
+  }
+
+  // Peso, altura, IMC
+  if (!isNaN(peso))   document.getElementById('heroPeso').textContent   = peso + ' kg';
+  if (!isNaN(altura)) document.getElementById('heroAltura').textContent = altura + ' cm';
+  if (!isNaN(peso) && !isNaN(altura) && altura > 0) {
+    const imc = (peso / Math.pow(altura / 100, 2)).toFixed(1);
+    document.getElementById('heroImc').textContent = imc;
+  }
+
+  // Toast
+  const toast = document.getElementById('toast');
+  toast.style.opacity   = '1';
+  toast.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => {
+    toast.style.opacity   = '0';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2500);
+}
+
+/* ── Init ────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  renderProfileMeds();
+  renderHealthSummary();
+
+  // Sync dark toggle
+  const dt2 = document.getElementById('darkToggle2');
+  if (dt2 && document.body.classList.contains('dark')) dt2.classList.add('on');
+
+  // Health form submit
+  document.getElementById('healthForm')?.addEventListener('submit', e => {
+    e.preventDefault();
+    healthData.sangre     = document.getElementById('hsEditSangre').value.trim();
+    healthData.presion    = document.getElementById('hsEditPresion').value.trim();
+    healthData.glucosa    = document.getElementById('hsEditGlucosa').value.trim();
+    healthData.colesterol = document.getElementById('hsEditColesterol').value.trim();
+    healthData.alergias   = document.getElementById('hsEditAlergias').value.trim();
+    renderHealthSummary();
+    closeHealthModal();
+    // Show toast
+    const t = document.getElementById('toast');
+    t.textContent = '✓ Resumen de salud actualizado';
+    t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+    setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; t.textContent='✓ Cambios guardados'; }, 2500);
+  });
+
+  // Profile med form submit
+  document.getElementById('profileMedForm')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('pmName').value.trim();
+    const freq = document.getElementById('pmFreq').value.trim();
+    if (!name) return;
+    profileMeds.push({ id: nextProfMedId++, name, freq: freq || '–' });
+    renderProfileMeds();
+    closeProfileMedModal();
+  });
+
+  // Close modals on backdrop click
+  document.getElementById('healthModal')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeHealthModal();
+  });
+  document.getElementById('profileMedModal')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeProfileMedModal();
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AuraHealth – Inicio</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* ── Modal genérico ── */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;align-items:center;justify-content:center;}
+    .modal-overlay.show{display:flex;}
+    .modal{background:var(--surface);border-radius:var(--radius);padding:28px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:modalIn .2s ease;}
+    @keyframes modalIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .modal-header h3{font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:700;color:var(--blue-dark);}
+    .modal-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted);}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+
+    /* ── Medication row ── */
+    .med-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);transition:all .2s;}
+    .med-row:hover{border-color:var(--turquoise);}
+    .med-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+    .med-info{flex:1;}
+    .med-name{font-weight:600;font-size:.9rem;color:var(--text);}
+    .med-desc{font-size:.75rem;color:var(--text-muted);}
+    .med-done-btn{background:none;border:2px solid var(--border);border-radius:6px;width:24px;height:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+    .med-done-btn.done{background:var(--turquoise);border-color:var(--turquoise);}
+    .med-done-btn.done svg{display:block;}
+    .med-done-btn svg{display:none;}
+    .med-del-btn{background:none;border:none;cursor:pointer;color:var(--text-muted);padding:4px;border-radius:6px;display:flex;align-items:center;transition:color .2s;}
+    .med-del-btn:hover{color:#e05050;}
+
+    /* ── Activity inline edit ── */
+    .act-edit-btn{background:none;border:none;cursor:pointer;color:var(--text-muted);padding:4px;border-radius:6px;display:flex;align-items:center;transition:color .2s;margin-left:4px;}
+    .act-edit-btn:hover{color:var(--blue-dark);}
+    .act-inline-form{display:none;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap;}
+    .act-inline-form.open{display:flex;}
+    .act-inline-form input{width:80px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.82rem;background:var(--bg);color:var(--text);outline:none;}
+    .act-inline-form input:focus{border-color:var(--turquoise);}
+    .act-inline-form button{padding:5px 12px;border-radius:6px;font-size:.8rem;cursor:pointer;border:none;font-family:'Roboto',sans-serif;}
+    .act-save-btn{background:var(--blue-dark);color:#fff;}
+    .act-cancel-btn{background:var(--bg);border:1px solid var(--border) !important;color:var(--text);}
+    .act-label-unit{font-size:.72rem;color:var(--text-muted);margin-left:2px;}
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="app-wrapper">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+        <circle cx="17" cy="17" r="17" fill="#1a3a6e"/>
+        <path d="M9 17 C9 12, 14 8, 17 13 C20 8, 25 12, 25 17 C25 22, 17 27, 17 27 C17 27, 9 22, 9 17Z" fill="#4db8c8"/>
+      </svg>
+      <span>AuraHealth</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item active" data-page="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Inicio
+      </a>
+      <a href="recordatorios.html" class="nav-item" data-page="recordatorios.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Recordatorios
+      </a>
+      <a href="recomendaciones.html" class="nav-item" data-page="recomendaciones.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Recomendaciones
+      </a>
+      <a href="perfil.html" class="nav-item" data-page="perfil.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mi Perfil
+      </a>
+      <a href="partner.html" class="nav-item" data-page="partner.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Partner
+      </a>
+      <div class="nav-divider"></div>
+      <div class="nav-item" onclick="document.getElementById('botFab').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        AuraBot
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;padding:0 2px;">Accesibilidad</div>
+      <div class="a11y-bar">
+        <button class="a11y-btn" id="fontDown">A-</button>
+        <button class="a11y-btn" id="fontUp">A+</button>
+        <button class="toggle-dark" id="darkToggle"></button>
+        <span style="font-size:.75rem;color:var(--text-muted);">Oscuro</span>
+      </div>
+      <div class="nav-divider" style="margin:12px 0"></div>
+      <a href="index.html" class="nav-item" style="color:#e05050;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#e05050" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar Sesión
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        <h1>Bienvenido, <span id="heroName">Jake</span> 👋</h1>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="badge"></span>
+        </button>
+        <div class="avatar" id="topbarAvatar">JS</div>
+      </div>
+    </header>
+
+    <main class="page-body">
+
+      <!-- STAT CARDS -->
+      <div class="grid-4 mb-6">
+        <div class="stat-card">
+          <div class="stat-icon teal">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div>
+            <div class="stat-label">Frecuencia cardíaca</div>
+            <div class="stat-value">72 <small style="font-size:.7rem">bpm</small></div>
+            <div class="stat-sub">↑ Normal</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <div>
+            <div class="stat-label">Medicamentos hoy</div>
+            <div class="stat-value" id="statMedValue">0/0</div>
+            <div class="stat-sub" id="statMedSub">0% completado</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="stat-label">Próxima cita</div>
+            <div class="stat-value" style="font-size:1.1rem">15 May</div>
+            <div class="stat-sub">Dr. Ramírez – 9:00 AM</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div class="stat-label">Pasos hoy</div>
+            <div class="stat-value" id="statSteps">6,240</div>
+            <div class="stat-sub" id="statStepsSub">Meta: 10,000</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS ROW -->
+      <div class="grid-2 mb-6">
+
+        <!-- ── Medications Card ── -->
+        <div class="card">
+          <div class="card-title" style="justify-content:space-between;">
+            <span style="display:flex;align-items:center;gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+              Progreso de Medicamentos
+            </span>
+            <button onclick="openMedModal()" title="Agregar medicamento" style="background:var(--blue-dark);border:none;border-radius:8px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+          <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;">
+            <div class="donut-wrap">
+              <svg id="donutMeds" width="160" height="160"></svg>
+              <div class="donut-center">
+                <div class="donut-pct" id="donutPct">0%</div>
+                <div class="donut-label">Completado</div>
+              </div>
+            </div>
+            <div style="flex:1;min-width:160px;">
+              <div id="medList" style="display:flex;flex-direction:column;gap:8px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Activity Card ── -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Actividad Semanal
+          </div>
+          <div id="activityList" style="display:flex;flex-direction:column;gap:10px;"></div>
+
+          <!-- Mini bar chart -->
+          <div style="margin-top:20px;">
+            <div style="font-size:.82rem;color:var(--text-muted);margin-bottom:8px;">Pasos esta semana</div>
+            <div id="weekBars" style="display:flex;align-items:flex-end;gap:8px;height:70px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REMINDERS + TIPS -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Próximos Recordatorios
+          </div>
+          <div class="reminder-list">
+            <div class="reminder-item">
+              <div class="reminder-check" style="pointer-events:none;border-color:var(--border)"></div>
+              <div class="reminder-info"><div class="reminder-name">Chequeo médico</div><span class="reminder-time">10 de mayo, 8:00 AM</span></div>
+              <span class="reminder-tag tag-medical">Médico</span>
+            </div>
+            <div class="reminder-item">
+              <div class="reminder-check" style="pointer-events:none;border-color:var(--border)"></div>
+              <div class="reminder-info"><div class="reminder-name">Pastillas – Omeprazol</div><span class="reminder-time">Hoy, 8:00 PM</span></div>
+              <span class="reminder-tag tag-medicine">Pastillas</span>
+            </div>
+            <div class="reminder-item">
+              <div class="reminder-check" style="pointer-events:none;border-color:var(--border)"></div>
+              <div class="reminder-info"><div class="reminder-name">Vacuna Influenza</div><span class="reminder-time">22 de mayo, 10:00 AM</span></div>
+              <span class="reminder-tag tag-vaccine">Vacuna</span>
+            </div>
+          </div>
+          <a href="recordatorios.html" class="btn btn-outline btn-sm mt-4">Ver todos →</a>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Recomendaciones de Salud
+          </div>
+          <div style="background:linear-gradient(135deg,var(--blue-dark),var(--turquoise));border-radius:var(--radius-sm);padding:18px;color:#fff;margin-bottom:14px;">
+            <p style="font-size:.9rem;font-weight:600;margin-bottom:8px;">Consejos para hoy</p>
+            <ul style="padding-left:18px;font-size:.84rem;opacity:.9;display:flex;flex-direction:column;gap:6px;">
+              <li>Mantente físicamente activo, sal a correr</li>
+              <li>Evita el consumo de alcohol</li>
+              <li>Realízate un examen médico ocular</li>
+              <li>Llega a tus metas de macronutrientes del día</li>
+            </ul>
+          </div>
+          <a href="recomendaciones.html" class="btn btn-teal btn-sm">Ver artículos →</a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ── MOBILE NAV ── -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a href="dashboard.html" class="mobile-nav-item active" data-page="dashboard.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Inicio
+    </a>
+    <a href="recordatorios.html" class="mobile-nav-item" data-page="recordatorios.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Recordatorios
+    </a>
+    <a href="recomendaciones.html" class="mobile-nav-item" data-page="recomendaciones.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Recs
+    </a>
+    <a href="perfil.html" class="mobile-nav-item" data-page="perfil.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Perfil
+    </a>
+    <a href="partner.html" class="mobile-nav-item" data-page="partner.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      Partner
+    </a>
+  </div>
+</nav>
+
+<!-- ── MODAL: Agregar Medicamento ── -->
+<div class="modal-overlay" id="medModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Agregar Medicamento</h3>
+      <button class="modal-close" onclick="closeMedModal()">✕</button>
+    </div>
+    <form id="medForm">
+      <div class="form-group">
+        <label>Nombre del medicamento</label>
+        <input type="text" id="mName" placeholder="Ej: Metformina" required/>
+      </div>
+      <div class="form-group">
+        <label>Dosis</label>
+        <input type="text" id="mDose" placeholder="Ej: 500mg"/>
+      </div>
+      <div class="form-group">
+        <label>Frecuencia</label>
+        <input type="text" id="mFreq" placeholder="Ej: 2 veces al día"/>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeMedModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── MODAL: Editar Actividad ── -->
+<div class="modal-overlay" id="actModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="actModalTitle">Editar Actividad</h3>
+      <button class="modal-close" onclick="closeActModal()">✕</button>
+    </div>
+    <form id="actForm">
+      <input type="hidden" id="actKey"/>
+      <div class="form-group">
+        <label id="actCurrLabel">Valor actual</label>
+        <input type="number" id="actCurr" min="0" step="0.1" required/>
+      </div>
+      <div class="form-group">
+        <label id="actGoalLabel">Meta</label>
+        <input type="number" id="actGoal" min="1" step="0.1" required/>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeActModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── AURABOT ── -->
+<button class="aurabot-fab" id="botFab" title="AuraBot – Asistente de salud">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+<div class="aurabot-window" id="botWindow">
+  <div class="bot-header"><div class="bot-dot"></div><h4>AuraBot</h4><button class="bot-close" id="botClose">✕</button></div>
+  <div class="bot-messages" id="botMessages">
+    <div class="msg bot">¡Hola, <span id="botName">Jake</span>! 👋 Soy <strong>AuraBot</strong>, tu asistente de salud personal. ¿En qué puedo ayudarte hoy?</div>
+  </div>
+  <div class="bot-suggestions">
+    <button class="sug-chip">¿Qué pastillas tomar?</button>
+    <button class="sug-chip">Consejo de ejercicio</button>
+    <button class="sug-chip">Agendar cita</button>
+  </div>
+  <div class="bot-input-row">
+    <input type="text" id="botInput" placeholder="Escribe tu consulta..."/>
+    <button class="bot-send" id="botSend">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
